@@ -1,0 +1,31 @@
+{
+    "name": "edgvi10/phphelpers",
+    "type": "library",
+    "description": "Heper functions and MySQL DB walker",
+    "keywords": [
+        "functions",
+        "mysql",
+        "php",
+        "library",
+        "mysql-tool"
+    ],
+    "homepage": "https://edapp.com.br",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eduardo Vieira",
+            "email": "edgvi10@gmail.com",
+            "homepage": "https://edapp.com.br",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.3.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "EDGVI10": "src/"
+        }
+    }
+}
