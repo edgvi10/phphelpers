@@ -2,6 +2,7 @@
     "name": "edgvi10/phphelpers",
     "type": "library",
     "description": "Heper functions and MySQL DB walker",
+    "version": "1.0.0",
     "keywords": [
         "functions",
         "mysql",
