@@ -1,6 +1,6 @@
 <?php
 
-namespace EDGVI10;
+namespace Edgvi10;
 
 class DBWalker
 {

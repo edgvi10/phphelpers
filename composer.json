@@ -26,7 +26,7 @@
     },
     "autoload": {
         "psr-0": {
-            "EDGVI10": "src/"
+            "Edgvi10": "src/"
         }
     }
 }
