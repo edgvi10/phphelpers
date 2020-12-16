@@ -1,7 +1,7 @@
 {
     "name": "edgvi10/phphelpers",
     "type": "library",
-    "description": "Heper functions and MySQL DB walker",
+    "description": "Helper functions and MySQL DB walker",
     "version": "1.0.0",
     "keywords": [
         "functions",
@@ -20,6 +20,7 @@
             "role": "Developer"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "php": ">=7.3.0"
     },
