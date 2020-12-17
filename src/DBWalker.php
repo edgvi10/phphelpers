@@ -54,6 +54,13 @@ class DBWalker
         return $string;
     }
 
+    public function UUID()
+    {
+        $select = $this->query("SELECT UUID() AS `uuid` ");
+        $uuid = $select->fetch_object()->uuid;
+        return $uuid;
+    }
+
     private function tableName($query_table)
     {
         $table_name = explode(" AS ", $query_table);
