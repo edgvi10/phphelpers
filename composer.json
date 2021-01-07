@@ -2,7 +2,7 @@
     "name": "edgvi10/phphelpers",
     "type": "library",
     "description": "Helper functions and MySQL DB walker",
-    "version": "1.0.2",
+    "version": "1.0.5",
     "keywords": [
         "functions",
         "mysql",
@@ -25,7 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Edgvi10\\": "src/"
+            "EDGVI10\\": "src/"
         }
     }
 }

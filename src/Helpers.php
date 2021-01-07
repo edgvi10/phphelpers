@@ -1,6 +1,6 @@
 <?php
 
-namespace Edgvi10;
+namespace EDGVI10;
 
 class Helpers
 {
@@ -25,6 +25,7 @@ class Helpers
 
         return (object) $return;
     }
+
     public static function cors()
     {
         if (isset($_SERVER["HTTP_ORIGIN"])) :
@@ -51,22 +52,6 @@ class Helpers
             mt_rand(0, 0xffff),
             mt_rand(0, 0xffff)
         );
-    }
-
-    public static function encript($password)
-    {
-        $password = trim($password);
-        $encrypted_password = null;
-        for ($i = 0; $i < strlen($password); $i++) :
-            $ascii = ord($password[$i]);
-            $ascii_jumped = chr(intval($ascii) ^ (($i + 1) * 2));
-
-            if ($ascii_jumped != "'") :
-                $encrypted_password = $encrypted_password . $ascii_jumped;
-            endif;
-        endfor;
-
-        return $encrypted_password;
     }
 
     public static function call(array $options, $debug = false)
