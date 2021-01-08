@@ -12,13 +12,15 @@ class Helpers
 
         $return = [];
         foreach ($rows as $row) :
-            if ($row[0] !== "#") :
-                if (!empty($row)) :
-                    $data = explode("=", $row);
-                    $key = strtolower(trim($data[0]));
-                    unset($data[0]);
-                    $value = implode("=", $data);
-                    $return[$key] = trim($value);
+            if (empty($row)) :
+                if ($row[0] !== "#") :
+                    if (!empty($row)) :
+                        $data = explode("=", $row);
+                        $key = strtolower(trim($data[0]));
+                        unset($data[0]);
+                        $value = implode("=", $data);
+                        $return[$key] = trim($value);
+                    endif;
                 endif;
             endif;
         endforeach;
