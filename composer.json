@@ -2,7 +2,7 @@
     "name": "edgvi10/phphelpers",
     "type": "library",
     "description": "Helper functions and MySQL DB walker",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "keywords": [
         "functions",
         "mysql",
