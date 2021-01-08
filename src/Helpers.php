@@ -12,7 +12,7 @@ class Helpers
 
         $return = [];
         foreach ($rows as $row) :
-            if (empty($row)) :
+            if (!empty($row)) :
                 if ($row[0] !== "#") :
                     if (!empty($row)) :
                         $data = explode("=", $row);
