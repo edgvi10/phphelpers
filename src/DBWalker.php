@@ -150,10 +150,8 @@ class DBWalker
         return $query_joins;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    ///  SELECT ///////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////
-    public function select($options, $debug = false)
+    // Builder Select
+    public function build_select($options)
     {
         // GET options
         $query_table = $options["table"];
@@ -190,6 +188,27 @@ class DBWalker
 
         $query = "SELECT {$query_columns} FROM {$query_table}{$query_joins}{$query_where}{$query_group}{$query_order}{$query_limit}{$query_offset}";
 
+        return $query;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    ///  SELECT ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////
+    public function select($options, $debug = false)
+    {
+        // GET options
+        $query_table = $options["table"];
+        $columns = (isset($options["columns"])) ? $options["columns"] : null;
+        $columns_hide = (isset($options["columns_hide"])) ? $options["columns_hide"] : null;
+        $joins = (isset($options["joins"])) ? $options["joins"] : null;
+        $where = (isset($options["where"])) ? $options["where"] : null;
+        $order = (isset($options["order_by"])) ? $options["order_by"] : null;
+        $group = (isset($options["group_by"])) ? $options["group_by"] : null;
+        $limit = (isset($options["limit"])) ? $options["limit"] : null;
+        $offset = (isset($options["offset"])) ? $options["offset"] : ((isset($options["limit"])) ? 0 : NULL);
+
+        $query = $this->build_select($options);
+
         $response = [];
         $response["success"] = false;
         if ($this->debug || $debug) $response["options"] = $options;
@@ -201,20 +220,6 @@ class DBWalker
             $response["success"] = true;
             $response["results"] = $result->num_rows;
             $response["found"] = $result->num_rows;
-
-            if (!is_null($limit) && 0 < $result->num_rows) :
-                $table_name = array_reverse(explode(" ", $query_table))[0];
-
-                $query_total = "SELECT COUNT(*) AS total FROM {$query_table}{$query_joins}{$query_where}";
-                if (!$result_total = $this->link->query($query_total)) :
-                    $response["query_total"] = $query_total;
-                    $response["message_total"] = $this->link->error;
-                else :
-                    $result_total = $result_total->fetch_object();
-                    $response["total"] = (int) $result_total->total;
-                    $response["limit"] = (int) $limit;
-                endif;
-            endif;
 
             $response["data"] = [];
             while ($row = $result->fetch_object()) :
