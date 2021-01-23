@@ -83,8 +83,14 @@ class DBWalker
 
     private function value($value)
     {
-        if ((!is_int($value) || !is_float($value)) && $value !== "NOW()" && $value !== "UUID()" && $value !== "NULL")
-            $value = "'" . $this->link->escape_string(trim($value)) . "'";
+        $functions = ["UUID()", "NOW()", "NULL"];
+        $useapostrofe = true;
+
+        if ($useapostrofe) $useapostrofe = (array_search($value, $functions) === false) ? true : false;
+        if ($useapostrofe) $useapostrofe = (hexdec(intval($value)) == hexdec($value)) ? false : true;
+        if ($useapostrofe) $useapostrofe = (hexdec(floatval($value)) == hexdec($value)) ? false : true;
+
+        $value = $useapostrofe ? "'" . $this->link->escape_string(trim($value)) . "'" : $value;
 
         return $value;
     }
