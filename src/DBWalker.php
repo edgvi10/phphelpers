@@ -95,6 +95,18 @@ class DBWalker
         return $value;
     }
 
+    private function getParam($pattern, $param)
+    {
+        $param = str_replace("`", "", $param);
+        $param = explode("_", $param);
+        unset($param[0]);
+        $param = implode("_", $param);
+        $param = implode("`.`", explode(".", $param));
+
+        $param = sprintf($pattern, $param);
+        return $param;
+    }
+
     private function where($where)
     {
         if (is_null($where)) :
@@ -103,37 +115,26 @@ class DBWalker
             $query_where = " WHERE " . $where;
         else :
             if ($this->isAssoc($where)) :
-                function getParam($pattern, $param)
-                {
-                    $param = str_replace("`", "", $param);
-                    $param = explode("_", $param);
-                    unset($param[0]);
-                    $param = implode("_", $param);
-                    $param = implode("`.`", explode(".", $param));
-
-                    $param = sprintf($pattern, $param);
-                    return $param;
-                }
 
                 $params = array();
                 foreach ($where as $param => $value) :
                     if (!is_array($value))
                         $value = $this->value($value);
 
-                    if (stripos($param, "param_") === 0) : $params[] = getParam("`%s` = {$value}", $param);
-                    elseif (stripos($param, "like_") === 0) : $params[] = getParam("`%s` LIKE '%%{$value}%%'", $param);
-                    elseif (stripos($param, "null_") === 0) : $params[] = getParam("`%s` IS NULL", $param);
-                    elseif (stripos($param, "notnull_") === 0) : $params[] = getParam("`%s` IS NOT NULL", $param);
-                    elseif (stripos($param, "contain_") === 0) : $params[] = getParam("FIND_IN_SET({$value}, `%s`)", $param);
-                    elseif (stripos($param, "between_") === 0) : $params[] = getParam("`%s` BETWEEN '{$value[0]}' AND '{$value[1]}'", $param);
-                    elseif (stripos($param, "upperequal_") === 0) : $params[] = getParam("`%s` >= {$value}", $param);
-                    elseif (stripos($param, "underequal_") === 0) : $params[] = getParam("`%s` <= {$value}", $param);
-                    elseif (stripos($param, "upper_") === 0) : $params[] = getParam("`%s` > {$value}", $param);
-                    elseif (stripos($param, "under_") === 0) : $params[] = getParam("`%s` < {$value}", $param);
+                    if (stripos($param, "param_") === 0) : $params[] = $this->getParam("`%s` = {$value}", $param);
+                    elseif (stripos($param, "like_") === 0) : $params[] = $this->getParam("`%s` LIKE '%%{$value}%%'", $param);
+                    elseif (stripos($param, "null_") === 0) : $params[] = $this->getParam("`%s` IS NULL", $param);
+                    elseif (stripos($param, "notnull_") === 0) : $params[] = $this->getParam("`%s` IS NOT NULL", $param);
+                    elseif (stripos($param, "contain_") === 0) : $params[] = $this->getParam("FIND_IN_SET({$value}, `%s`)", $param);
+                    elseif (stripos($param, "between_") === 0) : $params[] = $this->getParam("`%s` BETWEEN '{$value[0]}' AND '{$value[1]}'", $param);
+                    elseif (stripos($param, "upperequal_") === 0) : $params[] = $this->getParam("`%s` >= {$value}", $param);
+                    elseif (stripos($param, "underequal_") === 0) : $params[] = $this->getParam("`%s` <= {$value}", $param);
+                    elseif (stripos($param, "upper_") === 0) : $params[] = $this->getParam("`%s` > {$value}", $param);
+                    elseif (stripos($param, "under_") === 0) : $params[] = $this->getParam("`%s` < {$value}", $param);
                     elseif ($param === "raw") :
                         foreach ($value as $val) $params[] = $val;
                     else :
-                        $params[] = getParam("`%s` = {$value}", $param);
+                        $params[] = $this->getParam("`%s` = {$value}", $param);
                     endif;
                 endforeach;
 
