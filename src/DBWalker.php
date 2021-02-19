@@ -87,8 +87,8 @@ class DBWalker
         $useapostrofe = true;
 
         if ($useapostrofe) $useapostrofe = (array_search($value, $functions) === false) ? true : false;
-        if ($useapostrofe) $useapostrofe = (hexdec(intval($value)) == hexdec($value)) ? false : true;
-        if ($useapostrofe) $useapostrofe = (hexdec(floatval($value)) == hexdec($value)) ? false : true;
+        // if ($useapostrofe) $useapostrofe = (hexdec(intval($value)) == hexdec($value)) ? false : true;
+        // if ($useapostrofe) $useapostrofe = (hexdec(floatval($value)) == hexdec($value)) ? false : true;
 
         $value = $useapostrofe ? "'" . $this->link->escape_string(trim($value)) . "'" : $value;
 
@@ -122,7 +122,7 @@ class DBWalker
                         $value = $this->value($value);
 
                     if (stripos($param, "param_") === 0) : $params[] = $this->getParam("`%s` = {$value}", $param);
-                    elseif (stripos($param, "like_") === 0) : $params[] = $this->getParam("`%s` LIKE '%%{$value}%%'", $param);
+                    elseif (stripos($param, "like_") === 0) : $params[] = $this->getParam("`%s` LIKE {$value}", $param);
                     elseif (stripos($param, "null_") === 0) : $params[] = $this->getParam("`%s` IS NULL", $param);
                     elseif (stripos($param, "notnull_") === 0) : $params[] = $this->getParam("`%s` IS NOT NULL", $param);
                     elseif (stripos($param, "contain_") === 0) : $params[] = $this->getParam("FIND_IN_SET({$value}, `%s`)", $param);
