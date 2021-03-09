@@ -210,6 +210,25 @@ class DBWalker
         return $query;
     }
 
+    public function select_total($options)
+    {
+        // GET options
+        $query_table = $options["table"];
+        $joins = (isset($options["joins"])) ? $options["joins"] : null;
+        $where = (isset($options["where"])) ? $options["where"] : null;
+        $group = (isset($options["group_by"])) ? $options["group_by"] : null;
+
+        $query_table = $this->tableName($options["table"]);
+        $query_where = $this->where($where);
+        $query_joins = $this->joins($joins);
+
+        $query_group = (!is_null($group)) ? " GROUP BY " . $group : NULL;
+
+        $total = $this->query("SELECT count(*) AS total FROM {$query_table}{$query_joins}{$query_where}{$query_group}")->fetch_object()->total;
+
+        return $total;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////
     ///  SELECT ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////
@@ -239,6 +258,7 @@ class DBWalker
             $response["success"] = true;
             $response["results"] = $result->num_rows;
             $response["found"] = $result->num_rows;
+            $response["total"] = $this->select_total($options);
 
             $response["data"] = [];
             while ($row = $result->fetch_object()) :
