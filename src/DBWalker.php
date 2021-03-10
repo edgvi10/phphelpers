@@ -284,6 +284,7 @@ class DBWalker
         $query_table = $options["table"];
         $data = $options["data"];
 
+        
         $multiple = false;
         if ($this->isAssoc($data)) :
             foreach ($data as $key => $value) :
@@ -293,7 +294,7 @@ class DBWalker
                 $values[] = $value;
             endforeach;
 
-            $query_cols = implode(", ", $cols);
+            $query_cols = implode("`, `", $cols);
             $query_values = implode(", ", $values);
         else :
             foreach ($data as $row) :
@@ -306,7 +307,7 @@ class DBWalker
                     $values[] = $value;
                 endforeach;
 
-                $query_cols = implode(", ", $cols);
+                $query_cols = implode("`, `", $cols);
                 $query_values[] = implode(", ", $values);
             endforeach;
 
@@ -316,7 +317,7 @@ class DBWalker
 
         $query_table = $this->tableName($options["table"]);
 
-        $query = "INSERT INTO $query_table ($query_cols) VALUES ($query_values)";
+        $query = "INSERT INTO {$query_table} (`{$query_cols}`) VALUES ({$query_values})";
 
         $response = [];
         $response["success"] = false;
