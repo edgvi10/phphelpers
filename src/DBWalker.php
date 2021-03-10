@@ -257,8 +257,7 @@ class DBWalker
         else :
             $response["success"] = true;
             $response["results"] = $result->num_rows;
-            $response["found"] = $result->num_rows;
-            $response["total"] = $this->select_total($options);
+            if (!empty($limit)) $response["total"] = $this->select_total($options);
 
             $response["data"] = [];
             while ($row = $result->fetch_object()) :
