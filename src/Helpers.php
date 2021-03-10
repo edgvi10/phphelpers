@@ -491,7 +491,7 @@ class Helpers
         $string = strtr($string, $list);
         $string = strtolower($string);
 
-        $string = preg_replace("/[^a-z0-9 ]+/", "", $string);
+        $string = preg_replace("/[^a-z0-9{$separator} ]+/", "", $string);
         $string = preg_replace("/[\s]/", "{$separator}", $string);
         $string = preg_replace("/{$separator}{2,}/", "{$separator}", $string);
 
