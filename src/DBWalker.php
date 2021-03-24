@@ -19,7 +19,7 @@ class DBWalker
 
         $this->link = new \MySQLi($this->host, $this->user, $this->pass, $this->base);
         if (mysqli_connect_errno()) {
-            exit(["success" => false, "message" => "Can't connect DB" . mysqli_connect_error()]);
+            exit(json_encode(["success" => false, "message" => "Can't connect DB" . mysqli_connect_error()]));
         }
         $this->link->set_charset('utf8');
         $this->link->query("SET time_zone = '-3:00'");
