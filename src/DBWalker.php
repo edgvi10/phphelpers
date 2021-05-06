@@ -191,9 +191,9 @@ class DBWalker
 
         if (is_array($order)) :
             foreach ($order as $key) :
-                if (stripos($key, "orderasc_") === 0) $orderby[] = sprintf("`%s` ASC", str_replace("orderasc_", "", $key));
-                if (stripos($key, "orderdesc_") === 0) $orderby[] = sprintf("`%s` DESC", str_replace("orderdesc_", "", $key));
-                if (stripos($key, "sort") === 0) $orderby[] = ("`order` > 0 DESC, CAST(`order` AS unsigned) ASC");
+                if (stripos($key, "orderasc_") === 0) $orderby[] = $this->getParam("`%s` ASC", $key); //sprintf("`%s` ASC", str_replace("orderasc_", "", $key));
+                if (stripos($key, "orderdesc_") === 0) $orderby[] =  $this->getParam("`%s` DESC", $key); //sprintf("`%s` DESC", str_replace("orderdesc_", "", $key));
+                if (stripos($key, "sort_") === 0) $orderby[] =  $this->getParam("`%s` > 0 DESC, CAST(`%s` AS unsigned) ASC", $key); //("`order` > 0 DESC, CAST(`order` AS unsigned) ASC");
             endforeach;
 
             $order = implode(", ", $orderby);
@@ -283,7 +283,7 @@ class DBWalker
         $query_table = $options["table"];
         $data = $options["data"];
 
-        
+
         $multiple = false;
         if ($this->isAssoc($data)) :
             foreach ($data as $key => $value) :
