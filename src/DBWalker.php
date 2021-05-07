@@ -210,6 +210,49 @@ class DBWalker
         return $query;
     }
 
+    public function build_insert($options, $debug = false)
+    {
+        $query_table = $options["table"];
+        $data = $options["data"];
+
+
+        $multiple = false;
+        if ($this->isAssoc($data)) :
+            foreach ($data as $key => $value) :
+                $value = $this->value($value);
+
+                $cols[] = $key;
+                $values[] = $value;
+            endforeach;
+
+            $query_cols = implode("`, `", $cols);
+            $query_values = implode(", ", $values);
+        else :
+            foreach ($data as $row) :
+                $cols = [];
+                $values = [];
+                foreach ($row as $key => $value) :
+                    $value = $this->value($value);
+
+                    $cols[] = $key;
+                    $values[] = $value;
+                endforeach;
+
+                $query_cols = implode("`, `", $cols);
+                $query_values[] = implode(", ", $values);
+            endforeach;
+
+            $query_values = implode("),\n(", $query_values);
+            $multiple = true;
+        endif;
+
+        $query_table = $this->tableName($options["table"]);
+
+        $query = "INSERT INTO {$query_table} (`{$query_cols}`) VALUES ({$query_values})";
+
+        return $query;
+    }
+
     public function select_total($options)
     {
         // GET options
