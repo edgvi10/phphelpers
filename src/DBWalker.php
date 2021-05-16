@@ -122,6 +122,8 @@ class DBWalker
                         $value = $this->value($value);
 
                     if (stripos($param, "param_") === 0) : $params[] = $this->getParam("`%s` = {$value}", $param);
+                    elseif (stripos($param, "equal_") === 0) : $params[] = $this->getParam("`%s` = {$value}", $param);
+                    elseif (stripos($param, "not_") === 0) : $params[] = $this->getParam("`%s` != {$value}", $param);
                     elseif (stripos($param, "like_") === 0) : $params[] = $this->getParam("`%s` LIKE {$value}", $param);
                     elseif (stripos($param, "null_") === 0) : $params[] = $this->getParam("`%s` IS NULL", $param);
                     elseif (stripos($param, "notnull_") === 0) : $params[] = $this->getParam("`%s` IS NOT NULL", $param);
