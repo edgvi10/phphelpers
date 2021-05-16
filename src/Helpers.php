@@ -383,9 +383,9 @@ class Helpers
 
                 default:
                     if (date("Y") != date("Y", strtotime($date))) :
-                        $formatted = utf8_encode(strftime("%b, %Y", strtotime($date)));
+                        $formatted = (strftime("%b, %Y", strtotime($date)));
                     elseif (date("W") == date("W", strtotime($date))) :
-                        $formatted = utf8_encode(strftime("%A", strtotime($date)));
+                        $formatted = (strftime("%A", strtotime($date)));
                     else :
                         $formatted = strftime("%d %b", strtotime($time));
                     endif;
