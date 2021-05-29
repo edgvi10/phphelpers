@@ -56,53 +56,70 @@ class Helpers
 
     public static function call(array $options, $debug = false)
     {
+        $result = [];
         $curl = curl_init();
+
+        $endpoint = $options["endpoint"];
+
+        if (!isset($options["headers"])) $options["headers"] = [];
+        if (!isset($options["headers"]["Content-Type"])) $options["headers"]["Content-Type"] = "application/json";
+
+        $headers = [];
+        foreach ($options["headers"] as $key => $value) :
+            $headers[] = "{$key}: {$value}";
+        endforeach;
+
+        if ((isset($options["data"]) && !empty($options["data"])) && $options["method"] !== "GET") :
+            if ($options["headers"]["Content-Type"] === "application/json") :
+                $paylod_data = json_encode($options["data"]);
+            elseif ($options["headers"]["Content-Type"] === "application/x-www-form-urlencoded") :
+                $paylod_data = http_build_query($options["data"]);
+
+            endif;
+        endif;
 
         switch ($options["method"]):
             case "POST":
                 curl_setopt($curl, CURLOPT_POST, 1);
-                if (isset($options["data"]) && !empty($options["data"]))
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($options["data"]));
                 break;
             case "PUT":
                 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-                if (isset($options["data"]) && !empty($options["data"]))
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($options["data"]));
                 break;
             default:
                 if (isset($options["data"]) && !empty($options["data"]))
-                    $options["endpoint"] = sprintf("%s?%s", $options["endpoint"], http_build_query($options["data"]));
+                    $endpoint = sprintf("%s?%s", $endpoint, http_build_query($options["data"]));
         endswitch;
 
-        $headers = [];
-        if (isset($options["headers"])) $headers = $options["headers"];
-        $headers[] = "Content-Type: application/json";
-
         // OPTIONS:
-        curl_setopt($curl, CURLOPT_URL, $options["endpoint"]);
+        curl_setopt($curl, CURLOPT_URL, $endpoint);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($curl, CURLOPT_HEADER, false);
+
+        if (!empty($paylod_data)) curl_setopt($curl, CURLOPT_POSTFIELDS, $paylod_data);
 
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
 
-        // EXECUTE:
+        // // EXECUTE:
         $response = curl_exec($curl);
         curl_close($curl);
 
         $result["response"] = self::isJson($response) ? json_decode($response, 1) : $response;
 
         if ($debug) :
-            $result["debug"]["curl"] = print_r($curl, true);
-            $result["debug"]["options"] = print_r($options, true);
+            // $result["debug"]["curl"] = $curl;
+            // $result["debug"]["options"] = $options;
+            $result["debug"]["endpoint"] = $endpoint;
+            $result["debug"]["headers"] = $headers;
+            $result["debug"]["paylod_data"] = $paylod_data;
 
             return $result;
         endif;
 
-        return (!empty($callback) && is_callable($callback)) ? $callback($result) : $result;
+        return $result;
     }
 
     public static function isJson($string)
@@ -471,7 +488,7 @@ class Helpers
         else :
             if (is_numeric($number) && floor($number) != $number) :
                 $decimal = explode(".", $number);
-                $decimal = count($decimal[1]);
+                $decimal = count($decimal);
                 $number = number_format($number, $decimal, ",", ".");
             else :
                 $number = preg_replace("/[^0-9]/", "", $number);
