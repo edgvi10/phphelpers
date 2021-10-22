@@ -198,8 +198,9 @@ class DBWalker
         if (is_array($order)) :
             foreach ($order as $key) :
                 if (stripos($key, "orderasc_") === 0) $orderby[] = $this->getParam("`%s` ASC", $key); //sprintf("`%s` ASC", str_replace("orderasc_", "", $key));
-                if (stripos($key, "orderdesc_") === 0) $orderby[] =  $this->getParam("`%s` DESC", $key); //sprintf("`%s` DESC", str_replace("orderdesc_", "", $key));
-                if (stripos($key, "sort_") === 0) $orderby[] =  $this->getParam("`%s` > 0 DESC, CAST(`%s` AS unsigned) ASC", $key); //("`order` > 0 DESC, CAST(`order` AS unsigned) ASC");
+                elseif (stripos($key, "orderdesc_") === 0) $orderby[] =  $this->getParam("`%s` DESC", $key); //sprintf("`%s` DESC", str_replace("orderdesc_", "", $key));
+                elseif (stripos($key, "sort_") === 0) $orderby[] =  $this->getParam("`%s` > 0 DESC, CAST(`%s` AS unsigned) ASC", $key); //("`order` > 0 DESC, CAST(`order` AS unsigned) ASC");
+                else $orderby[] = $key;
             endforeach;
 
             $order = implode(", ", $orderby);
@@ -403,11 +404,13 @@ class DBWalker
         // GET options
         $query_table = $options["table"];
         $where = (isset($options["where"])) ? $options["where"] : null;
+        $joins = (isset($options["joins"])) ? $options["joins"] : null;
         $data = (isset($options["data"])) ? $options["data"] : null;
 
 
         foreach ($data as $key => $value) :
-            $value = $this->value($value);
+            if (strpos($value, "RAW") === 0) $value = trim($value, "RAW");
+            else $value = $this->value($value);
 
             $query_fields[] = "`{$key}` = {$value}";
         endforeach;
@@ -415,9 +418,10 @@ class DBWalker
         $query_fields = " SET " . implode(", ", $query_fields);
 
         $query_table = $this->tableName($options["table"]);
+        $query_join = (!empty($joins)) ?  $this->joins($joins) : NULL;
         $query_where = $this->where($where);
 
-        $query = "UPDATE {$query_table}{$query_fields}{$query_where}";
+        $query = "UPDATE {$query_table}{$query_join}{$query_fields}{$query_where}";
 
         $response = [];
         $response["success"] = false;
