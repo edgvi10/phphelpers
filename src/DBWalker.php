@@ -46,6 +46,11 @@ class DBWalker
         $result = $this->link->query(trim($query));
         return $result;
     }
+    
+    public function error()
+    {
+        return $this->link->error;
+    }
 
     public function escapestring($string)
     {
